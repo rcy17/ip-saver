@@ -92,7 +92,7 @@ class Window(QMainWindow, Ui_MainWindow):
         filename, _ = QFileDialog.getSaveFileName(
             self,
             "Save results as CSV file",
-            "",
+            "ip-record.csv",
             "CSV File (*.csv)"
         )
         if not filename:
