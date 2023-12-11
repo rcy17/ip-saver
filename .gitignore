@@ -1,2 +1,6 @@
 *.csv
 __pycache__
+/arp-scan
+/build
+/dist
+.DS_Store

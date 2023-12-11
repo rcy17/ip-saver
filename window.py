@@ -1,11 +1,13 @@
 from socket import AddressFamily
 from subprocess import Popen, PIPE
 from csv import writer
+from os import environ
+from pathlib import Path
 
 from PyQt5.QtCore import QObject, QThread, pyqtSignal, Qt
 from PyQt5.QtWidgets import QMainWindow, QComboBox, QPushButton, QTableWidget, QTableWidgetItem, QFileDialog, QMessageBox
 from psutil import net_if_addrs
-
+# DYLD_LIBRARY_PATH
 from window_main import Ui_MainWindow
 
 class ARPScanWorker(QObject):
@@ -17,7 +19,9 @@ class ARPScanWorker(QObject):
         self.nic = nic
 
     def run(self):
-        process = Popen(["arp-scan", "--localnet", "-x", "-I", self.nic], stdout=PIPE, text=True)
+        env = environ.copy()
+        env["DYLD_LIBRARY_PATH"] = env.get("DYLD_LIBRARY_PATH", "") + ":" + str(Path(__file__).parent/ "arp-scan")
+        process = Popen([str(Path(__file__).parent / "arp-scan" / "arp-scan"), "--localnet", "-x", "-I", self.nic], stdout=PIPE, text=True, env=env)
         count = 0
         while True:
             line = process.stdout.readline().strip()
@@ -91,6 +95,8 @@ class Window(QMainWindow, Ui_MainWindow):
             "",
             "CSV File (*.csv)"
         )
+        if not filename:
+            return
         def item_to_text(item):
             return item.text() if item else ""
         with open(filename, "w", newline="") as csv_file:
@@ -100,12 +106,8 @@ class Window(QMainWindow, Ui_MainWindow):
                 row_data = [item_to_text(self.tableWidget.item(row, col))
                             for col in range(self.tableWidget.columnCount())]
                 csv.writerow(row_data)
-        box = QMessageBox(self)
-        box.setWindowTitle("Data Saved")
-        box.setText("Successfully saved data into " + filename)
-        box.exec()
-        
-    
+        QMessageBox(parent=self, text="Successfully saved data into " + filename).exec()
+
     def on_worker_result(self, result):
         row = self.tableWidget.rowCount()
         self.tableWidget.setRowCount(row + 1)
