@@ -20,7 +20,7 @@ exe = EXE(
     a.scripts,
     [],
     exclude_binaries=True,
-    name='main',
+    name='IP-Saver',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
@@ -39,11 +39,11 @@ coll = COLLECT(
     strip=False,
     upx=True,
     upx_exclude=[],
-    name='main',
+    name='IP-Saver',
 )
 app = BUNDLE(
     coll,
     name='IP-Saver.app',
-    icon=None,
+    icon='assets/ip-saver.icns',
     bundle_identifier=None,
 )
