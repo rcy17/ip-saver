@@ -4,7 +4,7 @@ mkdir -p dist/dmg
 # Empty the dmg folder.
 rm -rf dist/dmg/*
 # Copy the app bundle to the dmg folder.
-cp -r "dist/IP-Saver.app" dist/dmg
+cp -R "dist/IP-Saver.app" dist/dmg
 # If the DMG already exists, delete it.
 test -f "dist/IP-Saver.dmg" && rm "dist/IP-Saver.dmg"
 create-dmg \
